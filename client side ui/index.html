@@ -1,0 +1,436 @@
+<!doctype html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Web Application</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+		<script src="scripts/jquery.min.js"></script>  
+		<script src="scripts/jquery-ui.min.js"></script> 	
+		<link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css">
+        <link rel="stylesheet" href="bower_components/weather-icons/css/weather-icons.min.css">
+		<link rel="stylesheet" href="styles/main.css"/>	
+		<link rel="stylesheet" href="styles/css/bootstrap-datepicker.css"/>
+    </head>
+	
+	<body>
+	<style>
+  .orm-control {
+  display: block;
+  width: 100%;
+  height: 34px;
+  padding: 6px 12px;
+  font-size: 14px;
+  line-height: 1.428571429;
+  color: #555;
+  vertical-align: middle;
+  background-color: #fff;
+  background-image: none;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+  box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+  -webkit-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+  transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+}
+</style>
+		<script src="scripts/vendor.js"></script>
+		<script src="scripts/datetimepicker.js"></script>
+		<script src="scripts/ui.js"></script>
+        <script src="scripts/app.js"></script>	
+		<div ng-app="app">
+		  <h2 style="margin-left:700px;color:black;">Dashboard</h2>
+		  <br>
+		  <br>
+		  <div data-ng-controller="myctrl">
+			<div class="row">
+			<div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><strong>Sales Chart</strong></h3>
+
+                </div>
+                <div class="panel-body"  >
+					<div id="Sales">
+					   
+					</div> 
+				</div>
+				
+            </div>            
+			</div>
+			<div class="col-md-6">
+			 <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><strong>Sales Chart</strong></h3>
+
+                </div>
+                <div class="panel-body"  >
+					<div class="row">
+					 <h2> Enter a date to retreive sales of that particular date</h2> 
+						   <div id="enterdate" class="col-md-4">
+						   
+						   <input style="width:300px;"type="text" class="orm-control" data-ng-model="date" placeholder="Choose a date">
+						   </div>
+						   <div style="margin-left:420px">
+						   <button ng-click="getsales();"
+                                class="btn btn-success btn-w-md"
+                                >Get Sales</button>
+								</div>
+					</div> 
+					<script>
+					$('#enterdate input').datepicker({
+								});
+					</script>
+					<br>
+		<section class="panel panel-default table-dynamic">
+        <div class="panel-heading"><strong><span class="glyphicon glyphicon-th"></span> Practices</strong></div>
+
+        <div class="table-filters">
+            <div class="row">
+                <div class="col-sm-4 col-xs-6">
+                    <form>
+                        <input type="text"
+                               placeholder="Filter....."
+                               class="form-control"
+                               data-ng-model="searchKeywords"
+                               data-ng-keyup="search()">
+                    </form>
+                </div>
+                <div class="col-sm-3 col-xs-6 filter-result-info">
+                    <span>
+                        Showing {{filteredStores.length}}/{{practices.length}} 
+                    </span>              
+                </div>
+            </div>
+        </div>
+
+        <table class="table table-bordered table-striped table-responsive">
+            <thead>
+                <tr>
+                    <th><div class="th">
+                         Order ID
+                        <span class="fa fa-angle-up"
+                              data-ng-click=" order('name') "
+                              data-ng-class="{active: row == 'name'}"></span>
+                        <span class="fa fa-angle-down"
+                              data-ng-click=" order('-name') "
+                              data-ng-class="{active: row == '-name'}"></span>
+                    </div></th>
+                    <th><div class="th">
+                        Order Date
+                        <span class="fa fa-angle-up"
+                              data-ng-click=" order('price') "
+                              data-ng-class="{active: row == 'price'}"></span>
+                        <span class="fa fa-angle-down"
+                              data-ng-click=" order('-price') "
+                              data-ng-class="{active: row == '-price'}"></span>
+                    </div></th>
+                    <th><div class="th">
+                        SKU
+                        <span class="fa fa-angle-up"
+                              data-ng-click=" order('sales') "
+                              data-ng-class="{active: row == 'sales'}"></span>
+                        <span class="fa fa-angle-down"
+                              data-ng-click=" order('-sales') "
+                              data-ng-class="{active: row == '-sales'}"></span>
+                    </div></th>
+                    <th><div class="th">
+                        Quantity
+                        <span class="fa fa-angle-up"
+                              data-ng-click=" order('rating') "
+                              data-ng-class="{active: row == 'rating'}"></span>
+                        <span class="fa fa-angle-down"
+                              data-ng-click=" order('-rating') "
+                              data-ng-class="{active: row == '-rating'}"></span>
+                    </div></th>
+					 <th><div class="th">
+                        Total Amount
+                        <span class="fa fa-angle-up"
+                              data-ng-click=" order('rating') "
+                              data-ng-class="{active: row == 'rating'}"></span>
+                        <span class="fa fa-angle-down"
+                              data-ng-click=" order('-rating') "
+                              data-ng-class="{active: row == '-rating'}"></span>
+                    </div></th>
+                </tr>
+            </thead>
+            <tbody>
+			
+                <tr ng-repeat="order in currentPageStores">
+                    <td>{{order.id}}</td>
+                    <td>{{order.date}}</td>
+                    <td>{{order.sku}}</td>
+					<td>{{order.quantity}}</td>
+					<td>{{order.amount}}</td>
+                  								
+                </tr>
+				
+            </tbody>
+        </table>
+
+        <footer class="table-footer">
+            <div class="row">
+                <div class="col-md-6 page-num-info">
+                    <span>
+                        Show 
+                        <select data-ng-model="numPerPage"
+                                data-ng-options="num for num in numPerPageOpt"
+                                data-ng-change="onNumPerPageChange()">
+                        </select> 
+                        entries per page
+                    </span>
+                </div>
+                <div class="col-md-6 text-right pagination-container">
+                    <pagination class="pagination-sm"
+                                ng-model="currentPage"
+                                total-items="filteredStores.length"
+                                max-size="4"
+                                ng-change="select(currentPage)"
+                                items-per-page="numPerPage"
+                                rotate="false"
+                                previous-text="&lsaquo;" next-text="&rsaquo;"
+                                boundary-links="true"></pagination>
+                </div>
+            </div>
+ </footer>
+ 
+	 <br>
+	 
+
+	
+   </section>
+   </div>
+				
+            </div>   
+			
+			</div>
+		  </div>
+		   <div class="row">
+		<section class="panel panel-default table-dynamic" style="margin-left:40px;width:1400px" >
+        <div class="panel-heading"><strong><span class="glyphicon glyphicon-th"></span> Data </strong></div><br>
+				  <div class="row">
+				  <div class="col-md-5" style="margin-left:20px;width:740px">
+		<section class="panel panel-default table-dynamic ">
+        <div class="panel-heading"><strong><span class="glyphicon glyphicon-th"></span> Products</strong></div>
+
+        <div class="table-filters">
+            <div class="row">
+                <div class="col-sm-4 col-xs-6">
+                    <form>
+                        <input type="text"
+                               placeholder="Filter....."
+                               class="form-control"
+                               data-ng-model="searchKeywords"
+                               data-ng-keyup="search()">
+                    </form>
+                </div>
+                <div class="col-sm-3 col-xs-6 filter-result-info">
+                    <span>
+                        Showing {{filteredStores.length}}/{{products.length}} 
+                    </span>              
+                </div>
+            </div>
+        </div>
+
+        <table class="table table-bordered table-striped table-responsive">
+            <thead>
+                <tr>
+                    <th><div class="th">
+                         Order ID
+                        <span class="fa fa-angle-up"
+                              data-ng-click=" order('name') "
+                              data-ng-class="{active: row == 'name'}"></span>
+                        <span class="fa fa-angle-down"
+                              data-ng-click=" order('-name') "
+                              data-ng-class="{active: row == '-name'}"></span>
+                    </div></th>
+                    <th><div class="th">
+                        Order Date
+                        <span class="fa fa-angle-up"
+                              data-ng-click=" order('price') "
+                              data-ng-class="{active: row == 'price'}"></span>
+                        <span class="fa fa-angle-down"
+                              data-ng-click=" order('-price') "
+                              data-ng-class="{active: row == '-price'}"></span>
+                    </div></th>
+                    <th><div class="th">
+                        SKU
+                        <span class="fa fa-angle-up"
+                              data-ng-click=" order('sales') "
+                              data-ng-class="{active: row == 'sales'}"></span>
+                        <span class="fa fa-angle-down"
+                              data-ng-click=" order('-sales') "
+                              data-ng-class="{active: row == '-sales'}"></span>
+                    </div></th>
+                    <th><div class="th">
+                        Quantity
+                        <span class="fa fa-angle-up"
+                              data-ng-click=" order('rating') "
+                              data-ng-class="{active: row == 'rating'}"></span>
+                        <span class="fa fa-angle-down"
+                              data-ng-click=" order('-rating') "
+                              data-ng-class="{active: row == '-rating'}"></span>
+                    </div></th>
+					 <th><div class="th">
+                        Total Amount
+                        <span class="fa fa-angle-up"
+                              data-ng-click=" order('rating') "
+                              data-ng-class="{active: row == 'rating'}"></span>
+                        <span class="fa fa-angle-down"
+                              data-ng-click=" order('-rating') "
+                              data-ng-class="{active: row == '-rating'}"></span>
+                    </div></th>
+					 <th><div class="th">
+                        Select
+                        <span class="fa fa-angle-up"
+                              data-ng-click=" order('rating') "
+                              data-ng-class="{active: row == 'rating'}"></span>
+                        <span class="fa fa-angle-down"
+                              data-ng-click=" order('-rating') "
+                              data-ng-class="{active: row == '-rating'}"></span>
+                    </div></th>
+                </tr>
+            </thead>
+            <tbody>
+			
+                <tr ng-repeat="order in currentPageStores">
+                    <td>{{order.id}}</td>
+                    <td>{{order.date}}</td>
+                    <td>{{order.sku}}</td>
+					<td>{{order.quantity}}</td>
+					<td>{{order.amount}}</td>
+                   <td class="actions">
+				   <div class="col-md-6">				   
+				    <button ng-click='assistantDetail(assistant.id);' class="btn btn-sm btn-primary " >
+													<i class="glyphicon glyphicon-pencil"></i>
+													Edit
+													</button>
+													<span class="space space-md"></span>
+					<button ng-click='deleteAssistant(assistant.id);' class="btn btn-sm btn-primary " >
+													<i class="glyphicon glyphicon-remove-sign"></i>
+													Delete
+													</button>	
+					
+					</div>
+				   </td>
+											
+												
+                </tr>
+				
+            </tbody>
+        </table>
+
+        <footer class="table-footer">
+            <div class="row">
+                <div class="col-md-6 page-num-info">
+                    <span>
+                        Show 
+                        <select data-ng-model="numPerPage"
+                                data-ng-options="num for num in numPerPageOpt"
+                                data-ng-change="onNumPerPageChange()">
+                        </select> 
+                        entries per page
+                    </span>
+                </div>
+                <div class="col-md-6 text-right pagination-container">
+                    <pagination class="pagination-sm"
+                                ng-model="currentPage"
+                                total-items="filteredStores.length"
+                                max-size="4"
+                                ng-change="select(currentPage)"
+                                items-per-page="numPerPage"
+                                rotate="false"
+                                previous-text="&lsaquo;" next-text="&rsaquo;"
+                                boundary-links="true"></pagination>
+                </div>
+            </div>
+			<button ng-click="addNewButton();" class="btn btn-primary pull-right" >
+													<i class="glyphicon glyphicon-pencil"></i>
+													Add New
+													</button>
+        </footer>
+ 
+	 <br>
+	 
+
+	
+   </section>
+   </div>
+   <section class="panel panel-default table-dynamic col-md-5" style="margin-left:50px;">
+        <div class="panel-heading"><strong><span class="glyphicon glyphicon-th"></span> Data</strong></div>
+		 <form name="form_constraints " class="form-validation " novalidate data-ng-submit="updateorder()">
+						<br>
+                        <div class="form-group">
+                            <label for="">Order ID</label>
+							
+                            <input  type="text"
+                                    class="form-control"
+									placeholder="Enter Order ID"
+                                    required
+									ng-pattern="/^[a-zA-Z0-9. ]*$/"
+                                    data-ng-model="order.id"
+                            >
+                            <br>
+							<label for="">Order Date</label>
+                           <div id="sandbox-container">
+						   <input type="text" class="orm-control" data-ng-model="order.date" placeholder="Choose a date"required>
+						   </div>
+                           <br>
+						   
+							<label for="">SKU</label>
+                            <input  type="text"
+                                    class="form-control"
+                                    required
+									placeholder="Enter SKU"
+									ng-pattern="/^[a-zA-Z0-9. ]*$/"
+                                    data-ng-model="order.sku"
+                            >
+                            <br>
+							
+							<script>
+							$('#sandbox-container input').datepicker({
+								});
+								
+							</script>
+							<label for="">Quantity</label>
+                            <input  type="text"
+                                    class="form-control"
+                                    required
+										placeholder="Should only contain digits"
+									ng-pattern="/^[0-9]*$/"
+                                    data-ng-model="order.quantity"
+                            >
+							<br>
+							<label for="">Total Amount</label>
+                            <input  type="text"
+                                    class="form-control"
+                                    required
+										placeholder="Should only contain digits (In Rs.)"
+									ng-pattern="/^[0-9]*$/"
+                                    data-ng-model="order.amount"
+                            >
+                           
+                            <br>
+							
+								<button type="submit"
+                                class="btn btn-success btn-w-md"
+                                data-ng-disabled="!canSubmitClinics()"
+                                >Save</button>
+								
+                        <div class="callout callout-info">
+                            <p>Save button will be active only when all fields are valid.</p>
+                           
+                        </div>
+						
+                    </form>
+		
+		</section>
+		</section>
+		</div>
+		  
+		</div>
+
+		
+		
+	</body>
+	
+</html>
