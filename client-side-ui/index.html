@@ -60,12 +60,12 @@
 			<div class="col-md-6">
 			 <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title"><strong>Sales Chart</strong></h3>
+                    <h3 class="panel-title"><strong>get Sales</strong></h3>
 
                 </div>
                 <div class="panel-body"  >
 					<div class="row">
-					 <h2> Enter a date to retreive sales of that particular date</h2> 
+					 <h2 style="margin-left:10px;"> Enter a date to retreive sales of that particular date</h2> 
 						   <div id="enterdate" class="col-md-4">
 						   
 						   <input style="width:300px;"type="text" class="orm-control" data-ng-model="date" placeholder="Choose a date">
@@ -235,7 +235,7 @@
             <thead>
                 <tr>
                     <th><div class="th">
-                         Order ID
+                         SKU
                         <span class="fa fa-angle-up"
                               data-ng-click=" order('name') "
                               data-ng-class="{active: row == 'name'}"></span>
@@ -244,7 +244,7 @@
                               data-ng-class="{active: row == '-name'}"></span>
                     </div></th>
                     <th><div class="th">
-                        Order Date
+                       Product Name
                         <span class="fa fa-angle-up"
                               data-ng-click=" order('price') "
                               data-ng-class="{active: row == 'price'}"></span>
@@ -253,7 +253,7 @@
                               data-ng-class="{active: row == '-price'}"></span>
                     </div></th>
                     <th><div class="th">
-                        SKU
+                        Description
                         <span class="fa fa-angle-up"
                               data-ng-click=" order('sales') "
                               data-ng-class="{active: row == 'sales'}"></span>
@@ -262,16 +262,7 @@
                               data-ng-class="{active: row == '-sales'}"></span>
                     </div></th>
                     <th><div class="th">
-                        Quantity
-                        <span class="fa fa-angle-up"
-                              data-ng-click=" order('rating') "
-                              data-ng-class="{active: row == 'rating'}"></span>
-                        <span class="fa fa-angle-down"
-                              data-ng-click=" order('-rating') "
-                              data-ng-class="{active: row == '-rating'}"></span>
-                    </div></th>
-					 <th><div class="th">
-                        Total Amount
+                        Amount
                         <span class="fa fa-angle-up"
                               data-ng-click=" order('rating') "
                               data-ng-class="{active: row == 'rating'}"></span>
@@ -292,12 +283,11 @@
             </thead>
             <tbody>
 			
-                <tr ng-repeat="order in currentPageStores">
-                    <td>{{order.id}}</td>
-                    <td>{{order.date}}</td>
-                    <td>{{order.sku}}</td>
-					<td>{{order.quantity}}</td>
-					<td>{{order.amount}}</td>
+                <tr ng-repeat="product in currentPageStores">
+					<td>{{product.sku}}</td>
+					<td>{{product.name}}</td>
+                    <td>{{product.description}}</td>
+					<td>{{product.amount}}</td>
                    <td class="actions">
 				   <div class="col-md-6">				   
 				    <button ng-click='assistantDetail(assistant.id);' class="btn btn-sm btn-primary " >
@@ -360,53 +350,42 @@
 		 <form name="form_constraints " class="form-validation " novalidate data-ng-submit="updateorder()">
 						<br>
                         <div class="form-group">
-                            <label for="">Order ID</label>
-							
-                            <input  type="text"
-                                    class="form-control"
-									placeholder="Enter Order ID"
-                                    required
-									ng-pattern="/^[a-zA-Z0-9. ]*$/"
-                                    data-ng-model="order.id"
-                            >
-                            <br>
-							<label for="">Order Date</label>
-                           <div id="sandbox-container">
-						   <input type="text" class="orm-control" data-ng-model="order.date" placeholder="Choose a date"required>
-						   </div>
-                           <br>
-						   
-							<label for="">SKU</label>
+							<label for="">Product SKU</label>
                             <input  type="text"
                                     class="form-control"
                                     required
 									placeholder="Enter SKU"
 									ng-pattern="/^[a-zA-Z0-9. ]*$/"
-                                    data-ng-model="order.sku"
+                                    data-ng-model="product.sku"
                             >
                             <br>
+                            <label for="">Product Name</label>
 							
-							<script>
-							$('#sandbox-container input').datepicker({
-								});
-								
-							</script>
-							<label for="">Quantity</label>
                             <input  type="text"
                                     class="form-control"
+									placeholder="Enter Product Name "
                                     required
-										placeholder="Should only contain digits"
-									ng-pattern="/^[0-9]*$/"
-                                    data-ng-model="order.quantity"
+									ng-pattern="/^[a-zA-Z0-9. ]*$/"
+                                    data-ng-model="product.name"
                             >
-							<br>
-							<label for="">Total Amount</label>
+                            <br>
+							 <label for="">Product Description</label>
+							
+                            <input  type="text"
+                                    class="form-control"
+									placeholder="Enter Product Description"
+                                    required
+									ng-pattern="/^[a-zA-Z0-9. ]*$/"
+                                    data-ng-model="product.description"
+                            >
+                            <br>
+							<label for="">Product Amount</label>
                             <input  type="text"
                                     class="form-control"
                                     required
 										placeholder="Should only contain digits (In Rs.)"
 									ng-pattern="/^[0-9]*$/"
-                                    data-ng-model="order.amount"
+                                    data-ng-model="product.amount"
                             >
                            
                             <br>
