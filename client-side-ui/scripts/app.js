@@ -2,9 +2,11 @@ var app = angular.module('app',[]);
 
 app.controller("myctrl",['$scope','$filter','logger','dashboardservice','$rootScope',function($scope,$filter,logger,dashboardservice,$rootScope)
 {
-$rootScope.mainurl="http://localhost:8080/health-trace";
+	$scope.idSelected=null;
+$rootScope.mainurl="http://localhost:8080/techchallenge/client-side-ui";
 localStorage.setItem("mainUrl", $rootScope.mainurl);
 $scope.order={};
+$scope.product={};
 var array=[{y:'2001',a:2300},
 {y:'2002',a:4000},
 {y:'2003',a:5000},
@@ -24,7 +26,7 @@ var mor1 = Morris.Line({
 });
 
 
-var original= angular.copy($scope.order); $scope.revert = function () {
+var original= angular.copy($scope.product); $scope.revert = function () {
       return $scope.clinic = angular.copy(original);
 	  $scope.form_constraints.$setPristine()
     }; $scope.canRevert = function () {
@@ -39,17 +41,53 @@ $scope.getsales=function()
 	if($scope.date==undefined)
 		logger.logError("Date cannot be empty!! Enter a date.");
 	else
-		alert(angular.toJson($scope.date));
+	{
+	dashboardservice.getsales($scope.date).success(function(response)
+	{
+	$scope.orders=response;
+	})
+	}
 	
 }
-$scope.updateorder=function()
+$scope.edit=function(productid)
 {
-	alert();
+	$scope.idSelected=productid;	
+	for(var i=0;i<$scope.currentPageStores.length;i++)
+	{
+		if($scope.currentPageStores[i].id==productid)
+		{
+			$scope.product=JSON.parse(JSON.stringify($scope.currentPageStores[i]));
+			
+			
+		}
+	}
+	
+}
+
+    dashboardservice.getproducts().success(function(response)
+	{
+	$scope.filteredStores=response;
+	$scope.stores=response;
+	$scope.currentPageStores = $scope.filteredStores.slice(0, 10);
+	})
+$scope.updateproduct=function()
+{
+	alert(angular.toJson($scope.product));
 };	
+$scope.deleteproduct=function()
+{
+
+	dashboardservice.deleteproduct($scope.product.id).success(function(response)
+	{
+	logger.logSuccess("Product Deleted Successfully");	
+	})
+	
+	
+}
 
 $scope.addNewButton=function()
 {
-	$scope.order=null;
+	$scope.product=null;
 	
 }	
 var init;
@@ -113,8 +151,16 @@ app.factory("logger", [function () {
 app.service("dashboardservice",['$http',function($http)
 {	var mainurl=localStorage.getItem("mainUrl");
 	this.getsales=function(date)
+	{	return $http.get(mainurl +'/combo2.json');
+		//return $http.get(mainurl +'/order?orderDate='+date);
+	};
+	this.getproducts=function()
+	{	return $http.get(mainurl +'/combo.json');
+		//return $http.get(mainurl +'/product');
+	};
+	this.deleteproduct=function(id)
 	{	
-		return $http.get(mainurl +'/date');
+		return $http.delete(mainurl +'/product?id='+id);
 	};
 }]);
 

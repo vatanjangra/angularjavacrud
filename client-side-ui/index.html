@@ -32,6 +32,10 @@
   -webkit-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
   transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
 }
+
+	.selected {
+  background-color: lightgreen;
+}
 </style>
 		<script src="scripts/vendor.js"></script>
 		<script src="scripts/datetimepicker.js"></script>
@@ -82,26 +86,7 @@
 					</script>
 					<br>
 		<section class="panel panel-default table-dynamic">
-        <div class="panel-heading"><strong><span class="glyphicon glyphicon-th"></span> Practices</strong></div>
-
-        <div class="table-filters">
-            <div class="row">
-                <div class="col-sm-4 col-xs-6">
-                    <form>
-                        <input type="text"
-                               placeholder="Filter....."
-                               class="form-control"
-                               data-ng-model="searchKeywords"
-                               data-ng-keyup="search()">
-                    </form>
-                </div>
-                <div class="col-sm-3 col-xs-6 filter-result-info">
-                    <span>
-                        Showing {{filteredStores.length}}/{{practices.length}} 
-                    </span>              
-                </div>
-            </div>
-        </div>
+        <div class="panel-heading"><strong><span class="glyphicon glyphicon-th"></span>Orders of {{date}}</strong></div>
 
         <table class="table table-bordered table-striped table-responsive">
             <thead>
@@ -155,10 +140,10 @@
             </thead>
             <tbody>
 			
-                <tr ng-repeat="order in currentPageStores">
+                <tr ng-repeat="order in orders">
                     <td>{{order.id}}</td>
-                    <td>{{order.date}}</td>
-                    <td>{{order.sku}}</td>
+                    <td>{{order.orderDate }}</td>
+                    <td>{{order.productId}}</td>
 					<td>{{order.quantity}}</td>
 					<td>{{order.amount}}</td>
                   								
@@ -166,34 +151,7 @@
 				
             </tbody>
         </table>
-
-        <footer class="table-footer">
-            <div class="row">
-                <div class="col-md-6 page-num-info">
-                    <span>
-                        Show 
-                        <select data-ng-model="numPerPage"
-                                data-ng-options="num for num in numPerPageOpt"
-                                data-ng-change="onNumPerPageChange()">
-                        </select> 
-                        entries per page
-                    </span>
-                </div>
-                <div class="col-md-6 text-right pagination-container">
-                    <pagination class="pagination-sm"
-                                ng-model="currentPage"
-                                total-items="filteredStores.length"
-                                max-size="4"
-                                ng-change="select(currentPage)"
-                                items-per-page="numPerPage"
-                                rotate="false"
-                                previous-text="&lsaquo;" next-text="&rsaquo;"
-                                boundary-links="true"></pagination>
-                </div>
-            </div>
- </footer>
- 
-	 <br>
+ <br>
 	 
 
 	
@@ -225,7 +183,7 @@
                 </div>
                 <div class="col-sm-3 col-xs-6 filter-result-info">
                     <span>
-                        Showing {{filteredStores.length}}/{{products.length}} 
+                        Showing {{filteredStores.length}}/{{stores.length}} 
                     </span>              
                 </div>
             </div>
@@ -283,18 +241,18 @@
             </thead>
             <tbody>
 			
-                <tr ng-repeat="product in currentPageStores">
-					<td>{{product.sku}}</td>
-					<td>{{product.name}}</td>
-                    <td>{{product.description}}</td>
+                <tr ng-repeat="product in currentPageStores" ng-class="{selected : product.id == idSelected}">
+					<td>{{product.id}}</td>
+					<td>{{product.productName}}</td>
+                    <td>{{product.Description}}</td>
 					<td>{{product.amount}}</td>
                    <td class="actions">
-				   <div class="col-md-6">				   
-				    <button ng-click='assistantDetail(assistant.id);' class="btn btn-sm btn-primary " >
+				   <div class="row" style="margin-left:10px;">				   
+				    <button ng-click='edit(product.id);' class="btn btn-sm btn-primary " >
 													<i class="glyphicon glyphicon-pencil"></i>
 													Edit
 													</button>
-													<span class="space space-md"></span>
+							
 					<button ng-click='deleteAssistant(assistant.id);' class="btn btn-sm btn-primary " >
 													<i class="glyphicon glyphicon-remove-sign"></i>
 													Delete
@@ -347,7 +305,7 @@
    </div>
    <section class="panel panel-default table-dynamic col-md-5" style="margin-left:50px;">
         <div class="panel-heading"><strong><span class="glyphicon glyphicon-th"></span> Data</strong></div>
-		 <form name="form_constraints " class="form-validation " novalidate data-ng-submit="updateorder()">
+		 <form name="form_constraints " class="form-validation " novalidate data-ng-submit="updateproduct()">
 						<br>
                         <div class="form-group">
 							<label for="">Product SKU</label>
@@ -356,7 +314,7 @@
                                     required
 									placeholder="Enter SKU"
 									ng-pattern="/^[a-zA-Z0-9. ]*$/"
-                                    data-ng-model="product.sku"
+                                    data-ng-model="product.id"
                             >
                             <br>
                             <label for="">Product Name</label>
@@ -366,7 +324,7 @@
 									placeholder="Enter Product Name "
                                     required
 									ng-pattern="/^[a-zA-Z0-9. ]*$/"
-                                    data-ng-model="product.name"
+                                    data-ng-model="product.productName"
                             >
                             <br>
 							 <label for="">Product Description</label>
@@ -376,7 +334,7 @@
 									placeholder="Enter Product Description"
                                     required
 									ng-pattern="/^[a-zA-Z0-9. ]*$/"
-                                    data-ng-model="product.description"
+                                    data-ng-model="product.Description"
                             >
                             <br>
 							<label for="">Product Amount</label>
