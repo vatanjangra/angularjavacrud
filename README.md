@@ -16,7 +16,7 @@ After cloning the repository, you need to set up some things. The Tomcat Server 
 You need to go to the directory in server-side where pom.xml is present. Open cmd and go to the pom.xml directory. Then type the following command
  
 ```
-#!mvn clean install
+mvn clean install
 
 
 ```
