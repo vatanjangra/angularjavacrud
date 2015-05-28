@@ -7,7 +7,7 @@ It is a web application containing both client-side and server-side projects. Th
 The server-side is REST API made using Java and Spring Framework. 
 This project uses MongoDB as database and JSON Object to communicate with each other.
 
-The main motive of this project is to show CRUD operations on database through web application.
+The main motive of this project is to implement CRUD operations on database through web application.
 
 ### How do I get set up? ###
 
