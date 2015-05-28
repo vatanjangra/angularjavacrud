@@ -3,25 +3,25 @@ var app = angular.module('app',[]);
 app.controller("myctrl",['$scope','$filter','logger','dashboardservice','$rootScope',function($scope,$filter,logger,dashboardservice,$rootScope)
 {
 	$scope.idSelected=null;
-$rootScope.mainurl="http://localhost:8080/techchallenge/client-side-ui";
+$rootScope.mainurl="http://localhost:8080/Onlineshop";
 localStorage.setItem("mainUrl", $rootScope.mainurl);
 $scope.order={};
 $scope.product={};
-var array=[{y:'2001',a:2300},
-{y:'2002',a:4000},
-{y:'2003',a:5000},
-{y:'2004',a:2500},
-{y:'2005',a:6700},
-{y:'2006',a:5500},
-{y:'2007',a:4900},
-{y:'2008',a:3800}];
+var array=[{y:'2001',a:2300,b:600},
+{y:'2002',a:4000,b:3000},
+{y:'2003',a:5000,b:4000},
+{y:'2004',a:2500,b:6000},
+{y:'2005',a:6700,b:2500},
+{y:'2006',a:5500,b:3000},
+{y:'2007',a:4900,b:1000},
+{y:'2008',a:3800,b:900}];
 var mor1 = Morris.Line({
   element: 'Sales',
   data: array,
   xkey: 'y',
-  ykeys: ['a'],
-  labels: ['Sales'],
-  lineColors: ["Red"],
+  ykeys: ['a','b'],
+  labels: ['Sales','Clients'],
+  lineColors: ["Red","Blue"],
   parseTime: false
 });
 
@@ -64,22 +64,43 @@ $scope.edit=function(productid)
 	
 }
 
+			$scope.createproduct = function() {
+				if (angular.isUndefined($scope.product.id)) {
+					dashboardservice.insertproduct($scope.product).success(
+							function(response) {
+								logger.logSuccess("Saved Successfully!!!");
+							})
+				} else {
+					dashboardservice.updateproduct($scope.product,$scope.product.id).success(
+							function(response) {
+								logger.logSuccess("Updated Successfully!!!");
+							})
+				}
+			};
     dashboardservice.getproducts().success(function(response)
 	{
 	$scope.filteredStores=response;
 	$scope.stores=response;
 	$scope.currentPageStores = $scope.filteredStores.slice(0, 10);
-	})
-$scope.updateproduct=function()
-{
-	alert(angular.toJson($scope.product));
-};	
-$scope.deleteproduct=function()
+	});
+$scope.deleteproduct=function(productid)
 {
 
-	dashboardservice.deleteproduct($scope.product.id).success(function(response)
+	dashboardservice.deleteproduct(productid).success(function(response)
 	{
-	logger.logSuccess("Product Deleted Successfully");	
+		
+	 for(var i=0;i<$scope.filteredStores.length;i++)
+	{
+		if($scope.filteredStores[i].id==productid)
+		{
+			$scope.filteredStores.splice(i,1);
+			$scope.currentPageStores=$scope.filteredStores.slice(0, 10);
+			$scope.product=null;
+			logger.logSuccess("Product Successfully Deleted!!!");
+			
+			
+		}
+	}	
 	})
 	
 	
@@ -151,16 +172,25 @@ app.factory("logger", [function () {
 app.service("dashboardservice",['$http',function($http)
 {	var mainurl=localStorage.getItem("mainUrl");
 	this.getsales=function(date)
-	{	return $http.get(mainurl +'/combo2.json');
-		//return $http.get(mainurl +'/order?orderDate='+date);
+	{	//return $http.get(mainurl +'/combo2.json');
+		return $http.get(mainurl +'/order?orderDate='+date);
 	};
 	this.getproducts=function()
-	{	return $http.get(mainurl +'/combo.json');
-		//return $http.get(mainurl +'/product');
+	{	//return $http.get(mainurl +'/combo.json');
+		return $http.get(mainurl +'/products');
 	};
 	this.deleteproduct=function(id)
-	{	
-		return $http.delete(mainurl +'/product?id='+id);
+	{	//return $http.get(mainurl +'/combo2.json');
+		return $http.delete(mainurl +'/products?id='+id);
+	};
+	this.insertproduct=function(product)
+	{	//return $http.post(mainurl +'/combo.json');
+	alert(angular.toJson(product));
+		return $http.post(mainurl +'/products',product);
+	};
+	this.updateproduct=function(product,productid)
+	{	//return $http.put(mainurl +'/combo.json');
+		return $http.put(mainurl +'/products?id='+productid,product);
 	};
 }]);
 
